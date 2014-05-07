@@ -1,0 +1,18 @@
+May 7, 2014 12:22pm
+This is a copy of complex_proc that I found lying about somewhere or other. It is used as part of the LaBelle group's code suite for processing data on the fly and making it available for cp_rtd, John Hughes' code that we soon hope to make legacy.
+
+For example, let's say you were using the South Pole setup with QuickUSB acquisition stuff. These instructions are from Matt Broughton:
+
+#################################
+
+1. In one of the terminals, type sudo /usr/src/qusb_acq/qusb_acq -P rxdsp-south_pole -o /daq/ -d 0.5 -p 1,2 
+This will start the acquisition
+2. In the second terminal, type sudo  /usr/src/complex_proc/cprtd -f 350 -F 680
+3. In the third terminal, type cd /usr/src/rtdgui/
+Then type sudo /usr/src/rtdgui/rtdgui hf2_config.input
+
+#################################
+
+Perhaps you can infer that complex_proc/cprtd has the responsibility of getting things ready for rtdgui to actually display data real-time. Know what I'm saying?
+
+Spencer Hatch
