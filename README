@@ -1,6 +1,8 @@
 May 7, 2014 12:22pm
 This is a copy of complex_proc that I found lying about somewhere or other. It is used as part of the LaBelle group's code suite for processing data on the fly and making it available for cp_rtd, John Hughes' code that we soon hope to make legacy.
 
+!!NOTE: FFTW3 IS ASSUMED TO BE INSTALLED ON YOUR 'CHINE AS PART OF COMPILING THIS. SPECIFICALLY, MAKE SURE YOUR LINKER HAS ACCESS TO THE FFTW3 LIBRARY.
+
 For example, let's say you were using the South Pole setup with QuickUSB acquisition stuff. These instructions are from Matt Broughton:
 
 #################################
