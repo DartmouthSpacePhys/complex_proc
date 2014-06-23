@@ -1,0 +1,15 @@
+First, let's get a command to search all relevant C files for given text. 
+--Locate every instance of '\.h' in this dir:
+----grep -E '\.h' *.c *.h
+
+--Search all include files mentioned in complex_proc.c
+----grep -E 'what you want' include/*
+
+
+
+
+
+ 
+
+Questions:
+L34-35: Will we need any hlines, vlines for a Python script? Not sure how display operates yet

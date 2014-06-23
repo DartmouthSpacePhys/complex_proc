@@ -1,0 +1,20 @@
+in /usr/include:
+complex.h
+stdio.h
+stdlib.h
+signal.h
+string.h
+math.h
+unistd.h
+sys/mman.h
+sys/types.h
+sys/stat.h
+fcntl.h
+sys/time.h
+fftw3.h
+
+in /usr/lib64/gcc/x86_64-pc-linux-gnu/4.6.3/include/
+stdarg.h
+stdbool.h
+
+./complex_proc.h
