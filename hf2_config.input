@@ -1,0 +1,27 @@
+# This is the configuration file for the HF2 system real-time display
+#
+# The format of this file is:
+#
+# Parameter
+# Value
+#
+# The value of each parameter must appear on the line below the parameter
+# Blank lines and comments (lines starting with #) are ignored
+#
+# All times are in UT
+#
+# For more information, contact:
+# Dr John Hughes
+# Physical Sciences Dept
+# Embry-Riddle Aeronautical University
+# (904)226-7122
+# john.hughes@erau.edu
+
+TMP_DIR
+/tmp/rtd
+
+DATA_DIR
+/tmp/rtd
+
+
+
