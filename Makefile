@@ -23,5 +23,5 @@ $(EXEC_1CH): $(OBJECTS_1CH)
 	$(CC) -o $@ $(CFLAGS) -c $<
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o $(EXEC) $(EXEC_1CH)
 
