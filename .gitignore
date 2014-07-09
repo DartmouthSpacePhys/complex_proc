@@ -1,0 +1,6 @@
+#build files
+*.o
+
+#execs
+cprtd
+cprtd_1ch

@@ -42,8 +42,8 @@
 /*     "aDtromtu hoCllge elSva eR DxPS  " }; */
 
 static char head_strings[2][32] = { \
-    "Dartmouth College Master RxDSP  ", \
-    "Dartmouth College Slave  RxDSP  " };
+    "Dartmouth College Master RxDSP   ",	\
+    "Dartmouth College Slave  RxDSP   " };
 
 static bool running = true;
 
@@ -175,11 +175,14 @@ int main (int argc, char **argv) {
 		atotal = hlines * average;
 
 		for (int chan = 0; chan < n_chan; chan++) {
-            hptr = memmem(dptr, 2*header.num_read, head_strings[chan], 32); // Find channel #chan's header
+            hptr = memmem(dptr, 2*header.num_read, head_strings[0], 32); // Find channel #chan's header
             if (hptr == NULL) {
-                printf("Failed to find channel %i's header!\n", chan+1);
+	      hptr = memmem(dptr, 2*header.num_read, head_strings[1], 32);
+	      if (hptr == NULL) {
+		printf("Failed to find channel %i's header!\n", chan+1);
                 continue;
-            }
+	      }
+            } 
 
             int lsb_offset = 0; // Find first non-zero LSB
             for (int i = 22; i < 200 && !lsb_offset; i++) {
