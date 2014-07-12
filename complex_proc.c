@@ -37,9 +37,17 @@
 #define PLIMIT 255.0
 #define BGCN 210.0
 
-static char head_strings[2][32] = { \
-    "aDtromtu hoCllge eaMtsreR DxPS  ", \
-    "aDtromtu hoCllge elSva eR DxPS  " };
+static char head_strings[2][2][33] =
+        {
+                { // Normal byte order
+                        "Dartmouth College Master RxDSP  \0",
+                        "Dartmouth College Slave  RxDSP  \0"
+                },
+                { // Swapped byte order (used with -E)
+                        "aDtromtu hoCllge eaMtsreR DxPS  \0",
+                        "aDtromtu hoCllge elSva eR DxPS  \0"
+                }
+        };
 
 static bool running = true;
 
@@ -63,8 +71,8 @@ int main (int argc, char **argv) {
 	float r;
 	struct f2i_coef co;
 	int hlines, vlines, average, n_chan, ind, atotal, shift, ret;
-    short int *hptr;
-    char *dptr = NULL;
+	short int *hptr;
+	char *dptr = NULL;
 
 	char file_str[1024], lvlfile[1024], hf2_runfile[1024], onecal[50];
 	struct gray_vals gray;
@@ -110,7 +118,7 @@ int main (int argc, char **argv) {
 	gettimeofday(&then, NULL);
 
 	memset(&header, 0, sizeof(struct header_info));
-/*	infile = fopen(o.infile, "r");
+	/*	infile = fopen(o.infile, "r");
 	if (infile == NULL) {
 		printf("failed to open %s.\n", o.infile); return(1);
 	}*/
@@ -136,7 +144,7 @@ int main (int argc, char **argv) {
 
 	initialize_dynvar(hlines, vlines, average, n_chan, &o);
 
-//	tmap = mmap_file("/tmp/rawrtdout", mapsize, O_RDWR|O_TRUNC);
+	//	tmap = mmap_file("/tmp/rawrtdout", mapsize, O_RDWR|O_TRUNC);
 	long long unsigned int count = 0;
 	// Main loop
 	while (running) {
@@ -151,11 +159,11 @@ int main (int argc, char **argv) {
 		average = header.averages;
 		n_chan = header.num_channels;
 
-//        printf("fail");fflush(stdout);
+		//        printf("fail");fflush(stdout);
 
-        dptr = realloc(dptr, 2*header.num_read);
-//        printf("searching %li bytes\n",2*header.num_read);
-        memmove(dptr, &imap[100], 2*header.num_read);
+		dptr = realloc(dptr, 2*header.num_read);
+		//        printf("searching %li bytes\n",2*header.num_read);
+		memmove(dptr, &imap[100], 2*header.num_read);
 
 		initialize_dynvar(hlines, vlines, average, n_chan, &o);
 
@@ -171,21 +179,23 @@ int main (int argc, char **argv) {
 		atotal = hlines * average;
 
 		for (int chan = 0; chan < n_chan; chan++) {
-            hptr = memmem(dptr, 2*header.num_read, head_strings[chan], 32); // Find channel #chan's header
-            if (hptr == NULL) {
-                printf("Failed to find channel %i's header!\n", chan+1);
-                continue;
-            }
+			hptr = memmem(dptr, 2*header.num_read, head_strings[o.endian][chan], 32); // Find channel #chan's header
+			if (hptr == NULL) {
+				printf("Failed to find channel %i's header!\n", chan+1);
+				continue;
+			}
 
-            int lsb_offset = 0; // Find first non-zero LSB
-            for (int i = 22; i < 200 && !lsb_offset; i++) {
-                if (hptr[i]&1) lsb_offset = i;
-            }
+			int lsb_offset = 0; // Find first non-zero LSB
+			for (int i = 22; i < 200 && !lsb_offset; i++) {
+				if (hptr[i]&1) lsb_offset = i;
+			}
+			
+			printf("lsb_offset: %i\n", lsb_offset); fflush(stdout);
 
-            samples = &hptr[lsb_offset];
+			samples = &hptr[lsb_offset];
 
-//			short int *reals = malloc(512*sizeof(short int));
-//			short int *compl = malloc(512*sizeof(short int));
+			//			short int *reals = malloc(512*sizeof(short int));
+			//			short int *compl = malloc(512*sizeof(short int));
 			for (int i = 0; i < atotal; i++) {
 
 				if (o.endian) {
@@ -198,16 +208,16 @@ int main (int argc, char **argv) {
 					fft_input[i] =  ((double) samples[2*i]);
 					fft_input[i] += ((double) samples[2*i+1])*I;
 				}
-//				reals[i] = (short int) creal(fft_input[i]);
-//				compl[i] = (short int) cimag(fft_input[i]);
+				//				reals[i] = (short int) creal(fft_input[i]);
+				//				compl[i] = (short int) cimag(fft_input[i]);
 				fft_input[i] *= window[i];
 
-//				fft_input[chan][i] = ((double) samples[shift+2*i]) + I*((double) samples[shift+2*i+1]);
+				//				fft_input[chan][i] = ((double) samples[shift+2*i]) + I*((double) samples[shift+2*i+1]);
 			}
 
-//			memmove(tmap, reals, 512*sizeof(short int));
-//			memmove(tmap+1024*sizeof(short int), compl, 512*sizeof(short int));
-//			memmove(tmap, window, 512*sizeof(double));
+			//			memmove(tmap, reals, 512*sizeof(short int));
+			//			memmove(tmap+1024*sizeof(short int), compl, 512*sizeof(short int));
+			//			memmove(tmap, window, 512*sizeof(double));
 
 			fftw_execute(fft_plan);
 
@@ -239,24 +249,24 @@ int main (int argc, char **argv) {
 		/*
 		 * If the hf2 run file exists, we write; if not, why bother?
 		 */
-//		if ((tempfile = fopen(hf2_runfile,"r")) != NULL) {
-	//		fclose(tempfile);
+		//		if ((tempfile = fopen(hf2_runfile,"r")) != NULL) {
+		//		fclose(tempfile);
 		//	printf("write");fflush(stdout);
 
-			rewind(specfile);
-			ret = ftruncate(specfd, 0);
-			for (int i = 0; i < hlines; i++) {
-				fprintf(specfile, "%.0lf %.2lf %.2lf %.2lf %.2lf\n", freqs[i],
-						powers[0%n_chan][i], powers[1%n_chan][i], powers[2%n_chan][i], powers[3%n_chan][i]);
-			}
-			fflush(specfile);
+		rewind(specfile);
+		ret = ftruncate(specfd, 0);
+		for (int i = 0; i < hlines; i++) {
+			fprintf(specfile, "%.0lf %.2lf %.2lf %.2lf %.2lf\n", freqs[i],
+					powers[0%n_chan][i], powers[1%n_chan][i], powers[2%n_chan][i], powers[3%n_chan][i]);
+		}
+		fflush(specfile);
 
-			for (int chan = 0; chan < n_chan; chan++) {
-				rewind(imagfile[chan]);
-				fprintf(imagfile[chan], "P5\n%i %i\n%i\n", vlines, hlines, (int) lrint(floor(PLIMIT)));
-				ret = fwrite(im[chan].in, sizeof(unsigned char), hlines*vlines, imagfile[chan]);
-				fflush(imagfile[chan]);
-			}
+		for (int chan = 0; chan < n_chan; chan++) {
+			rewind(imagfile[chan]);
+			fprintf(imagfile[chan], "P5\n%i %i\n%i\n", vlines, hlines, (int) lrint(floor(PLIMIT)));
+			ret = fwrite(im[chan].in, sizeof(unsigned char), hlines*vlines, imagfile[chan]);
+			fflush(imagfile[chan]);
+		}
 		//} // if(write)
 
 		count++;
@@ -402,63 +412,63 @@ static void do_depart(int signum) {
 }
 
 int parse_opt(struct cp_opts *options, int argc, char **argv) {
-    int c;
+	int c;
 
-    while (-1 != (c = getopt(argc, argv, "m:f:F:c:C:B:g:s:Evh"))) {
+	while (-1 != (c = getopt(argc, argv, "m:f:F:c:C:B:g:s:Evh"))) {
 		switch (c) {
-			case 'm':
-				options->infile = optarg;
-				break;
-            case 'f':
-				options->freq_min = strtod(optarg, NULL);
-				break;
-            case 'F':
-				options->freq_max = strtod(optarg, NULL);
-				break;
-			case 'C':
-				options->freq_cent = strtod(optarg, NULL);
-				break;
-			case 'B':
-				options->freq_bw = strtod(optarg, NULL);
-				break;
-            case 'c':
-				options->agcfile = optarg;
-				options->agccal = true;
-				break;
-            case 'g':
-            	options->granularity = strtoul(optarg, NULL, 0);
-            	break;
-            case 's':
-            	options->filesize = strtoul(optarg, NULL, 0);
-            	break;
-            case 'E':
-            	options->endian = !options->endian;
-            	break;
-            case 't':
-            	options->tmpdir = optarg;
-            	break;
-            case 'v':
-				options->verbose = true;
-				break;
-            case 'h':
-            default:
-				printf("\ncprtd: Process data for hf2_display.\n\n Options:\n");
-				printf("\t-m <#>\tReal-time display monitor file [Default: %s].\n", DEF_INFILE);
-				printf("\t-f <#>\tLowest frequency in band [%i].\n", DEF_FREQ_MIN);
-				printf("\t-F <#>\tHighest frequency in band [%i].\n", DEF_FREQ_MAX);
-				printf("\t-c <s>\tAGC Calibration levels file [none],\n");
-				printf("\t\tprovide to enable AGC of channel 1 on channel 3 output.\n");
-				printf("\t-g <#>\tSet process granularity (in us) [%i].\n", DEF_GRAN);
-				printf("\t-g <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
-				printf("\t-t <s>\tSet temporary directory [%s].\n", DEF_TMPDIR);
-				printf("\t-v Be verbose.\n");
-				printf("\t-h Display this message.\n\n");
-				exit(1);
+		case 'm':
+			options->infile = optarg;
+			break;
+		case 'f':
+			options->freq_min = strtod(optarg, NULL);
+			break;
+		case 'F':
+			options->freq_max = strtod(optarg, NULL);
+			break;
+		case 'C':
+			options->freq_cent = strtod(optarg, NULL);
+			break;
+		case 'B':
+			options->freq_bw = strtod(optarg, NULL);
+			break;
+		case 'c':
+			options->agcfile = optarg;
+			options->agccal = true;
+			break;
+		case 'g':
+			options->granularity = strtoul(optarg, NULL, 0);
+			break;
+		case 's':
+			options->filesize = strtoul(optarg, NULL, 0);
+			break;
+		case 'E':
+			options->endian = !options->endian;
+			break;
+		case 't':
+			options->tmpdir = optarg;
+			break;
+		case 'v':
+			options->verbose = true;
+			break;
+		case 'h':
+		default:
+			printf("\ncprtd: Process data for hf2_display.\n\n Options:\n");
+			printf("\t-m <#>\tReal-time display monitor file [Default: %s].\n", DEF_INFILE);
+			printf("\t-f <#>\tLowest frequency in band [%i].\n", DEF_FREQ_MIN);
+			printf("\t-F <#>\tHighest frequency in band [%i].\n", DEF_FREQ_MAX);
+			printf("\t-c <s>\tAGC Calibration levels file [none],\n");
+			printf("\t\tprovide to enable AGC of channel 1 on channel 3 output.\n");
+			printf("\t-g <#>\tSet process granularity (in us) [%i].\n", DEF_GRAN);
+			printf("\t-g <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
+			printf("\t-t <s>\tSet temporary directory [%s].\n", DEF_TMPDIR);
+			printf("\t-v Be verbose.\n");
+			printf("\t-h Display this message.\n\n");
+			exit(1);
 		}
 
-    }
+	}
 
-    return argc;
+	return argc;
 }
 
 void init_opt(struct cp_opts *o) {
@@ -473,7 +483,7 @@ void init_opt(struct cp_opts *o) {
 	o->granularity = DEF_GRAN;
 	o->endian = DEF_ENDIAN;
 	o->tmpdir = DEF_TMPDIR;
-    o->filesize = DEF_FILESIZE;
+	o->filesize = DEF_FILESIZE;
 
 	o->verbose = false;
 }
