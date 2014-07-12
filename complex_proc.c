@@ -40,12 +40,13 @@
 static char head_strings[2][2][33] =
         {
                 { // Normal byte order
-                        "Dartmouth College Master RxDSP  \0",
-                        "Dartmouth College Slave  RxDSP  \0"
-                },
-                { // Swapped byte order (used with -E)
                         "aDtromtu hoCllge eaMtsreR DxPS  \0",
                         "aDtromtu hoCllge elSva eR DxPS  \0"
+                },
+                { // Swapped byte order (used with -E)
+		  // (I guess short ints are read in with bytes swapped compared to disk order?)
+                        "Dartmouth College Master RxDSP  \0",
+                        "Dartmouth College Slave  RxDSP  \0"
                 }
         };
 
@@ -190,7 +191,8 @@ int main (int argc, char **argv) {
 				if (hptr[i]&1) lsb_offset = i;
 			}
 			
-			printf("lsb_offset: %i\n", lsb_offset); fflush(stdout);
+			//			printf("lsb_offset: %i\n", lsb_offset); fflush(stdout);
+			lsb_offset = 26; // Fudge.  Why was this lsb search in here?!
 
 			samples = &hptr[lsb_offset];
 

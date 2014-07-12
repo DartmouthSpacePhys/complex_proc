@@ -1,0 +1,6 @@
+# No object files
+*.o
+
+# No executables
+cprtd
+cprtd_1ch
