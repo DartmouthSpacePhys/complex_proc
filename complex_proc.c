@@ -181,6 +181,8 @@ int main (int argc, char **argv) {
             for (int i = 22; i < 200 && !lsb_offset; i++) {
                 if (hptr[i]&1) lsb_offset = i;
             }
+            //                      printf("lsb_offset: %i\n", lsb_offset); fflush(stdout);                         
+	    lsb_offset = 26; // Fudge.  Why was this lsb search in here?! 
 
             samples = &hptr[lsb_offset];
 
