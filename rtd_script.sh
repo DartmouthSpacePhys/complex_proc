@@ -5,4 +5,4 @@ echo "Using ${CPRTD}..."
 
 #/daq/rtdgui/rtdgui -g 640x480+0+0 /daq/rtdgui/hf2_config.input&
 /daq/rtdgui/rtdgui /daq/rtdgui/hf2_config.input&
-/usr/src/complex_proc/${CPRTD} -E -f 0 -F 5000
+/usr/src/complex_proc/${CPRTD} -f 0 -F 5000

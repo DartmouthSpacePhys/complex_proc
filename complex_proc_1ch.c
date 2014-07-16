@@ -37,9 +37,9 @@
 #define PLIMIT 255.0
 #define BGCN 210.0
 
-/* static char head_strings[2][32] = { \ */
-/*     "aDtromtu hoCllge eaMtsreR DxPS  ", \ */
-/*     "aDtromtu hoCllge elSva eR DxPS  " }; */
+ /* static char head_strings[2][32] = { \  */
+ /*     "aDtromtu hoCllge eaMtsreR DxPS  ", \  */
+ /*     "aDtromtu hoCllge elSva eR DxPS  " };  */
 
 static char head_strings[2][32] = { \
     "Dartmouth College Master RxDSP   ",	\
