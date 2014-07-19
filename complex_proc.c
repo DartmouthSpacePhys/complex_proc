@@ -37,9 +37,22 @@
 #define PLIMIT 255.0
 #define BGCN 210.0
 
-static char head_strings[2][32] = { \
-    "aDtromtu hoCllge eaMtsreR DxPS  ", \
-    "aDtromtu hoCllge elSva eR DxPS  " };
+static char head_strings[2][2][33] =
+        {
+                { // Normal byte order
+                        "aDtromtu hoCllge eaMtsreR DxPS  \0",
+                        "aDtromtu hoCllge elSva eR DxPS  \0"
+                },
+                { // Swapped byte order (used with -E)
+		  // (I guess short ints are read in with bytes swapped compared to disk order?)
+                        "Dartmouth College Master RxDSP  \0",
+                        "Dartmouth College Slave  RxDSP  \0"
+                }
+        };
+
+/* static char head_strings[2][32] = { \ */
+/*     "aDtromtu hoCllge eaMtsreR DxPS  ", \ */
+/*     "aDtromtu hoCllge elSva eR DxPS  " }; */
 
 static bool running = true;
 
@@ -171,7 +184,7 @@ int main (int argc, char **argv) {
 		atotal = hlines * average;
 
 		for (int chan = 0; chan < n_chan; chan++) {
-            hptr = memmem(dptr, 2*header.num_read, head_strings[chan], 32); // Find channel #chan's header
+            hptr = memmem(dptr, 2*header.num_read, head_strings[o.endian][chan], 32); // Find channel #chan's header
             if (hptr == NULL) {
                 printf("Failed to find channel %i's header!\n", chan+1);
                 continue;
