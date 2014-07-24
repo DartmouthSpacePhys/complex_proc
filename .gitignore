@@ -4,3 +4,6 @@
 #execs
 cprtd
 cprtd_1ch
+
+# pngs from saved spectra
+*.png
