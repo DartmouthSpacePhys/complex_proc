@@ -4,3 +4,6 @@
 # No executables
 cprtd
 cprtd_1ch
+
+# pngs
+*.png
