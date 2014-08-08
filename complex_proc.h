@@ -19,6 +19,7 @@
 #define DEF_FILESIZE 262244
 #define DEF_ENDIAN false
 #define DEF_TMPDIR "/tmp/rtd"
+#define DEF_PREFIX "test"
 
 struct gray_vals {
 	int min;
@@ -45,6 +46,7 @@ struct cp_opts {
 	int granularity;
     size_t filesize;
 	char *tmpdir;
+        char *prefix;
 	bool endian;
 
 	bool verbose;

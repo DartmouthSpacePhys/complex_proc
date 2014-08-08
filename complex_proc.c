@@ -127,18 +127,18 @@ int main (int argc, char **argv) {
 	if (infile == NULL) {
 		printf("failed to open %s.\n", o.infile); return(1);
 	}*/
-	sprintf(file_str, "%s/test.data", o.tmpdir);
+	sprintf(file_str, "%s/%s.data", o.tmpdir, o.prefix);
 	specfile = fopen(file_str, "w");
 	if (specfile == NULL) {
 		printf("failed to open %s.\n", file_str); return(1);
 	}
 	int specfd = fileno(specfile);
 	imagfile = malloc(N_CHAN * sizeof(FILE *));
-	sprintf(hf2_runfile, "%s/hf2_display_running", o.tmpdir);
-	sprintf(lvlfile, "%s/levels.grayscale", o.tmpdir);
+	sprintf(hf2_runfile, "%s/%s_hf2_display_running", o.tmpdir, o.prefix);
+	sprintf(lvlfile, "%s/%s_levels.grayscale", o.tmpdir, o.prefix);
 
 	for (int chan = 0; chan < N_CHAN; chan++) {
-		sprintf(file_str, "%s/test.image%1i", o.tmpdir, chan+1);
+       	        sprintf(file_str, "%s/%s.image%1i", o.tmpdir, o.prefix, chan+1);
 		imagfile[chan] = fopen(file_str, "w");
 		if (imagfile[chan] == NULL) {
 			printf("failed to open %s.\n", file_str); return(1);
@@ -419,7 +419,7 @@ static void do_depart(int signum) {
 int parse_opt(struct cp_opts *options, int argc, char **argv) {
     int c;
 
-    while (-1 != (c = getopt(argc, argv, "m:f:F:c:C:B:g:s:Evh"))) {
+    while (-1 != (c = getopt(argc, argv, "m:f:F:c:C:B:g:s:o:Evh"))) {
 		switch (c) {
 			case 'm':
 				options->infile = optarg;
@@ -452,9 +452,12 @@ int parse_opt(struct cp_opts *options, int argc, char **argv) {
             case 't':
             	options->tmpdir = optarg;
             	break;
+            case 'o':
+            	options->prefix = optarg;
+            	break;
             case 'v':
-				options->verbose = true;
-				break;
+	        options->verbose = true;
+	        break;
             case 'h':
             default:
 				printf("\ncprtd: Process data for hf2_display.\n\n Options:\n");
@@ -464,8 +467,10 @@ int parse_opt(struct cp_opts *options, int argc, char **argv) {
 				printf("\t-c <s>\tAGC Calibration levels file [none],\n");
 				printf("\t\tprovide to enable AGC of channel 1 on channel 3 output.\n");
 				printf("\t-g <#>\tSet process granularity (in us) [%i].\n", DEF_GRAN);
-				printf("\t-g <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
+				printf("\t-s <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
 				printf("\t-t <s>\tSet temporary directory [%s].\n", DEF_TMPDIR);
+				printf("\t-o <s>\tSet output file prefix [%s].\n", DEF_PREFIX);
+				printf("\t-E \tSet endianness of word search [%i].\n", DEF_ENDIAN);
 				printf("\t-v Be verbose.\n");
 				printf("\t-h Display this message.\n\n");
 				exit(1);
@@ -488,7 +493,8 @@ void init_opt(struct cp_opts *o) {
 	o->granularity = DEF_GRAN;
 	o->endian = DEF_ENDIAN;
 	o->tmpdir = DEF_TMPDIR;
-    o->filesize = DEF_FILESIZE;
+	o->prefix = DEF_PREFIX;
+	o->filesize = DEF_FILESIZE;
 
 	o->verbose = false;
 }
