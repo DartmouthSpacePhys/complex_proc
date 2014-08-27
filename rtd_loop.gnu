@@ -1,3 +1,4 @@
-pause 0.5
+pause 2.0
+set yrange [-500:500]
 replot
 reread

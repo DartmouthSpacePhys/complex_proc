@@ -5,7 +5,7 @@ RTDF="rtd.data"
 
 OPREFIX="test"
 
-if [ $1 ] && [ $1 -eq 1 ]; then CPRTD="cprtd_1ch"; else CPRTD="cprtd"; fi
+if [ $1 ] && [ $1 -eq 50 ]; then CPRTD="cprtd_1ch"; else CPRTD="cprtd"; fi
 
 if [ $2 ];
 then if [ `expr match ${2} "f"` -eq 1 ]; then 
@@ -24,4 +24,4 @@ RTD_DIRF=${RTD_DIR}/${RTDF}
 echo "Using ${CPRTD} for \"${OPREFIX}\" display with rtd file ${RTD_DIRF}..."
 
 /usr/src/rtdgui/rtdgui /usr/src/rtdgui/hf2_config.input ${OPREFIX}&
-/usr/src/complex_proc/${CPRTD} -f 0 -F 5000 -m ${RTD_DIRF} -o ${OPREFIX}
+/usr/src/complex_proc/${CPRTD} -f 0 -F 5000  -m ${RTD_DIRF} -o ${OPREFIX}
