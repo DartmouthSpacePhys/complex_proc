@@ -7,3 +7,6 @@ cprtd_1ch
 
 # pngs
 *.png
+#No emacs temp thingies
+*~
+
