@@ -461,7 +461,8 @@ int parse_opt(struct cp_opts *options, int argc, char **argv) {
 			printf("\t-c <s>\tAGC Calibration levels file [none],\n");
 			printf("\t\tprovide to enable AGC of channel 1 on channel 3 output.\n");
 			printf("\t-g <#>\tSet process granularity (in us) [%i].\n", DEF_GRAN);
-			printf("\t-g <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
+			printf("\t-s <#>\tSet size of rtd data file (bytes) [%i].\n", DEF_FILESIZE);
+			printf("\t-E\tSwap endianness of header search [%i].\n",DEF_ENDIAN);
 			printf("\t-t <s>\tSet temporary directory [%s].\n", DEF_TMPDIR);
 			printf("\t-v Be verbose.\n");
 			printf("\t-h Display this message.\n\n");
